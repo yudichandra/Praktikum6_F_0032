@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Faculty;
-use Mail;
-use App\Mail\FacultyMail;
-
-class FacultyController extends Controller
+use App\Models\Student;
+class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +14,9 @@ class FacultyController extends Controller
      */
     public function index()
     {
-        $faculties = Faculty::orderBy('id','ASC')->get();
+        $students = Student::orderBy('id','ASC')->get();
 
-        return view('facultyCRUD.index',compact('faculties'));
+        return view('studentCRUD.index',compact('students'));
     }
 
     /**
@@ -29,7 +26,7 @@ class FacultyController extends Controller
      */
     public function create()
     {
-        return view('facultyCRUD.create');
+        return view('studentCRUD.create');
     }
 
     /**
@@ -41,29 +38,19 @@ class FacultyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_fakultas' => 'required',
+            'nama_depan' => 'required',
+            'nama_belakang' => 'required',
+            'email' => 'required',
+            'no_telp' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required',
         ]);
+       
+        Student::create($request->all());
 
-        Faculty::create($request->all());
-
-        return redirect()->route('faculties.index')
+        return redirect()->route('students.index')
         ->with('success','Item create successfully.');
-
-         ///mengirikan email
-    try{
-        $detail=[
-            'body' =>$request->nama_fakultas,
-
-        ];
-        Mail::to('kornelius7chandra@gmail.com')->send(new FacultyMail($detail));
-        return redirect()->route('faculties.index')
-        ->with('success','item created successfully.');
-
-    }catch(Exception $e){
-        return redirect()->route('faculties.index')->with('success','Item Created Successfully but cannot send the email');
-        
     }
-}
 
     /**
      * Display the specified resource.
@@ -73,8 +60,8 @@ class FacultyController extends Controller
      */
     public function show($id)
     {
-        $faculties = Faculty::find($id);
-        return view ('facultyCRUD.show',compact('faculties'));
+        $students = Student::find($id);
+        return view ('studentCRUD.show',compact('students'));
     }
 
     /**
@@ -85,8 +72,8 @@ class FacultyController extends Controller
      */
     public function edit($id)
     {
-        $faculties = Faculty::find($id);
-        return view ('facultyCRUD.edit',compact('faculties'));
+        $students = Student::find($id);
+        return view ('studentCRUD.edit',compact('students'));
     }
 
     /**
@@ -99,11 +86,16 @@ class FacultyController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_fakultas' =>'required',
+            'nama_depan' => 'required',
+            'nama_belakang' => 'required',
+            'email' => 'required',
+            'no_telp' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required',
         ]);
-        Faculty::find($id)->update($request->all());
+        Student::find($id)->update($request->all());
 
-        return redirect()->route('faculties.index')
+        return redirect()->route('students.index')
         ->with('success','Item update successfully');
     }
 
@@ -115,11 +107,9 @@ class FacultyController extends Controller
      */
     public function destroy($id)
     {
-        Faculty::find($id)->delete();
+        Student::find($id)->delete();
 
-        return redirect()->route('faculties.index')
+        return redirect()->route('students.index')
         ->with('success','Item deleted successfully');
     }
-
-  
 }
